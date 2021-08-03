@@ -9,7 +9,8 @@ const db = require("../models");
  * if you want to see the results in the terminal
  */
 
-// init()
+// this executes the function when run with nodemon
+//init();
 
 /**
  * 1. Complete the code of the function to query the database
@@ -21,7 +22,7 @@ const db = require("../models");
  * Use lean and exec on the query
  */
 async function findUserByLastName() {
-  const user = null;
+  const user = await db.User.findOne({ lastName: "McGuire" }).lean().exec();
 
   return user;
 }
@@ -40,7 +41,10 @@ async function findUserByLastName() {
  * Use lean and exec on the query
  */
 async function findUserByEmailAndProjectFields() {
-  const user = null;
+  const user = await db.User.findOne({ email: "cuk@boeli.gn" })
+    .select("_id firstName lastName email")
+    .lean()
+    .exec();
 
   return user;
 }
@@ -61,7 +65,10 @@ async function findUserByEmailAndProjectFields() {
  * Use lean and exec on the query
  */
 async function getUserEmails() {
-  const users = null;
+  const users = await db.User.find({})
+    .select({ email: 1, _id: 0 })
+    .lean()
+    .exec();
 
   return users;
 }
@@ -85,7 +92,12 @@ async function getUserEmails() {
  * Use lean and exec on the query
  */
 async function getFirst3FirstNames() {
-  const users = null;
+  const users = await db.User.find({})
+    .select({ firstName: 1, _id: 0 })
+    .sort({ firstName: 1 })
+    .limit(3)
+    .lean()
+    .exec();
 
   return users;
 }
@@ -108,10 +120,14 @@ async function getFirst3FirstNames() {
  * This should return an object and not an array of a single element.
  */
 async function getUpdatedEmail() {
-  let user = null;
+  let user = await db.User.findOneAndUpdate(
+    { email: "beta@houboem.py" },
+    { $set: { email: "ryanmcg@mail.com" } },
+    { new: true, projection: { firstName: 1, lastName: 1, email: 1 } },
+  ).exec();
 
   // Uncomment this line after finishing the DB update query
-  // user = await user.toObject();
+  user = await user.toObject();
 
   return user;
 }
@@ -131,10 +147,12 @@ async function getUpdatedEmail() {
  * This is the same as running `.lean()`
  */
 async function getRemovedUser() {
-  let user = null;
+  let user = await db.User.findOneAndDelete({
+    $and: [{ speaks: "catalan" }, { speaks: "spanish" }],
+  }).exec();
 
   // Uncomment this line after finishing the DB remove query
-  // user = await user.toObject();
+  user = await user.toObject();
 
   return user;
 }
