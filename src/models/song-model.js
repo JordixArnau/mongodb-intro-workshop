@@ -41,7 +41,44 @@ const mongoose = require("mongoose");
  * 1.6 set the "createdAt" and "updatedAt" properties that are created automatically
  */
 
-const SongSchema = new mongoose.Schema({});
+const SongSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    genre: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    duration: {
+      type: Number,
+      required: true,
+    },
+    stats: {
+      timesPlayed: {
+        type: Number,
+        default: 0,
+      },
+      upVotes: {
+        type: Number,
+        default: 0,
+      },
+      downVotes: {
+        type: Number,
+        default: 0,
+      },
+    },
+    author: {
+      type: mongoose.SchemaTypes.ObjectId,
+      required: true,
+      ref: "user",
+    },
+  },
+  { timestamps: true },
+);
 
 const SongModel = new mongoose.model("song", SongSchema);
 
